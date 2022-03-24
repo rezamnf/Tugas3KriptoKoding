@@ -1,6 +1,6 @@
 from sympy import randprime
 import random
-from utility import plaintext_to_blockvalue, block_to_plaintext
+from utility import char_to_int
 import os
 
 class RSA:
@@ -63,28 +63,15 @@ class RSA:
         self.n = int(pri[1])
 
     def encrypt(self, plaintext, e, n):
-        pt = plaintext_to_blockvalue(plaintext)
+        pt = char_to_int(plaintext)
         res = []
         for block in pt:
-            mi = pow(int(block), e, n)
-            res.append(str(hex(mi)))
+            res.append(pow(block, e, n))
         return res
 
     def decrypt(self, ciphertext, d, n):
-        res = []
-        for block in ciphertext:
-            res.append(pow(block, d, n))
-        res = block_to_plaintext(res)
+        pt = char_to_int(ciphertext)
+        res = ""
+        for block in pt:
+            res += chr(pow(block, d, n))
         return res
-
-if __name__ == "__main__":
-    RSA = RSA()
-    # rsa.load_public_key("rsa.pub")
-    # rsa.load_private_key("rsa.pri")
-    f = open("test.txt", "rb")
-    pt = (f.read())
-    f.close()
-    ct = RSA.encrypt(pt, RSA.e, RSA.n)
-    RSA.decrypt(ct, RSA.d,RSA.n)
-    # temp = rsa.encrypt(999)
-    # rsa.decrypt(temp)

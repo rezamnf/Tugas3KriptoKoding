@@ -1,3 +1,4 @@
+from re import I
 import sys
 import time
 from PyQt5.uic import loadUi
@@ -47,16 +48,6 @@ class RSAScreen(QDialog):
                 result.append(e)
 
             return "".join([chr(int(e, 2)) for e in result])
-
-    def writefile_encrypt(self, filename: str="output.png", content: str=""):
-    # Menulis ciphertext ke dalam file
-        from pathlib import Path
-
-        path = filename
-        
-        with open(path, 'w') as file:
-            result = ' '.join(content)
-            file.write(str(result))
 
     def writefile_bin(self, filename: str="output.png", content: str=""):
     # Menulis biner ke dalam file
@@ -147,22 +138,21 @@ class RSAScreen(QDialog):
             return
         else:
             pt = self.readfile_bin(self.pt_path)
-            print(pt)
             ct = self.RSA.encrypt(pt, int(self.eKey.toPlainText()), int(self.nKey.toPlainText()))
             e = time.time()
-            display = str(ct)
-            self.cipherResult.setPlainText(display)
+            display = [hex(i) for i in ct]
+            self.cipherResult.setPlainText(str(display))
             fname = QFileDialog.getSaveFileName(self, 'Save File',"output_encrypt/")
             if(fname[0] == ''):
                 self.warning_msg("Error","Tulis Nama File")
             else:
-                self.writefile_encrypt(fname[0],ct)
+                self.writefile_bin(fname[0],ct)
                 self.pt_path = ""
                 self.refresh()
 
         t = str(round(e-s, 10))
         pt_size = str(len(pt))
-        ct_size = str(len(''.join(ct)))
+        ct_size = str(len(''.join(str(ct))))
         msg = "Time : " + t + " seconds\n" + "Plaintext : " + pt_size + " bytes\n" + "Ciphertext : " + ct_size + " bytes\n"
         self.info_msg("Encrypt Success!\n" + "Lihat File Hasil pada Folder Output!\n", msg)
 
@@ -173,13 +163,10 @@ class RSAScreen(QDialog):
             self.warning_msg("Wrong Key!", "Key must be filled!")
             return
         else:
-
-            cttemp = self.readfile_bin(self.ct_path)
-            cttemp = cttemp.split(" ")
-            ct = [int(i, 16) for i in cttemp]
+            ct = self.readfile_bin(self.ct_path)
             pt = self.RSA.decrypt(ct, int(self.dKey.toPlainText()), int(self.nKey.toPlainText()))
             e = time.time()
-            self.plainResult.setPlainText(pt)
+            self.plainResult.setPlainText(str(pt))
             fname = QFileDialog.getSaveFileName(self, 'Save File', "output_decrypt/")
             if(fname[0] == ''):
                 self.warning_msg("Error","Tulis Nama File")
@@ -189,7 +176,7 @@ class RSAScreen(QDialog):
                 self.refresh()
 
         t = str(round(e-s, 10))
-        ct_size = str(len(cttemp))
+        ct_size = str(len(ct))
         pt_size = str(len(pt))
         msg = "Time : " + t + " seconds\n" + "Ciphertext : " + ct_size + " bytes\n" + "Plaintext : " + pt_size + " bytes\n"
         self.info_msg("Decrypt Success!\n" + "Lihat File Hasil pada Folder Output!\n", msg)
