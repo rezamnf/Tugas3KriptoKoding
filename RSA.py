@@ -1,7 +1,6 @@
 from sympy import randprime
 import random
 from utility import char_to_int
-import os
 
 class RSA:
     def __init__(self, key_size=180):
@@ -63,15 +62,14 @@ class RSA:
         self.n = int(pri[1])
 
     def encrypt(self, plaintext, e, n):
-        pt = char_to_int(plaintext)
+        pt = plaintext.split(",")
         res = []
         for block in pt:
-            res.append(pow(block, e, n))
+            res.append(pow(int(block), e, n))
         return res
 
-    def decrypt(self, ciphertext, d, n):
-        pt = char_to_int(ciphertext)
-        res = ""
+    def decrypt(self, pt, d, n):
+        res = []
         for block in pt:
-            res += chr(pow(block, d, n))
+            res.append(pow(int(block), d, n))
         return res

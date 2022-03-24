@@ -47,7 +47,29 @@ class RSAScreen(QDialog):
                     e = (8 - len(e)) * "0" + e
                 result.append(e)
 
-            return "".join([chr(int(e, 2)) for e in result])
+            return ",".join([str(int(e, 2)) for e in result])
+
+    def readfile_int(self, filename: str = "blue.png"):
+    # Membaca file menjadi biner
+        path = filename
+        
+        with open(path, 'r') as file:
+            content = file.read()
+            datas = content.split()
+            return [int(data) for data in datas]
+            # byte = file.read(1)
+            # while byte:
+            #     temp.append(int.from_bytes(byte, "big"))
+            #     byte = file.read(1)
+            
+            # temp = [bin(bits)[2:] for bits in temp]
+            # result = []
+            # for e in temp:
+            #     if len(e) < 8:
+            #         e = (8 - len(e)) * "0" + e
+            #     result.append(e)
+
+            # return ",".join([str(int(e, 2)) for e in result])
 
     def writefile_bin(self, filename: str="output.png", content: str=""):
     # Menulis biner ke dalam file
@@ -55,12 +77,19 @@ class RSAScreen(QDialog):
 
         path = filename
         
-        with open(path, 'wb') as file:
-            bytes = []
-            for char in content:
-                byte = int.to_bytes(ord(char), 1, "big")
-                bytes.append(byte)
-            file.write(b"".join(bytes))
+        # with open(path, 'wb') as file:
+        #     bytes = []
+        #     for value in content:
+        #         byte = int.to_bytes(value, 1,"big")
+        #         bytes.append(byte)
+        #     file.write(b"".join(bytes))
+
+        with open(path, 'w') as file:
+            bytes = ""
+            for value in content:
+                # byte = int.to_bytes(value, 1,"big")
+                bytes += (str(value) + "\n")
+            file.write(bytes)
 
     def generate_key(self):
         self.RSA.generate_key()
@@ -163,8 +192,10 @@ class RSAScreen(QDialog):
             self.warning_msg("Wrong Key!", "Key must be filled!")
             return
         else:
-            ct = self.readfile_bin(self.ct_path)
+            ct = self.readfile_int(self.ct_path)
+            print("Checkpoin 1")
             pt = self.RSA.decrypt(ct, int(self.dKey.toPlainText()), int(self.nKey.toPlainText()))
+            print("Checkpoin 2")
             e = time.time()
             self.plainResult.setPlainText(str(pt))
             fname = QFileDialog.getSaveFileName(self, 'Save File', "output_decrypt/")
