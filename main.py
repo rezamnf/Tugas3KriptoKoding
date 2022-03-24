@@ -57,39 +57,32 @@ class RSAScreen(QDialog):
             content = file.read()
             datas = content.split()
             return [int(data) for data in datas]
-            # byte = file.read(1)
-            # while byte:
-            #     temp.append(int.from_bytes(byte, "big"))
-            #     byte = file.read(1)
-            
-            # temp = [bin(bits)[2:] for bits in temp]
-            # result = []
-            # for e in temp:
-            #     if len(e) < 8:
-            #         e = (8 - len(e)) * "0" + e
-            #     result.append(e)
 
-            # return ",".join([str(int(e, 2)) for e in result])
-
-    def writefile_bin(self, filename: str="output.png", content: str=""):
-    # Menulis biner ke dalam file
+    def writefile_int(self, filename: str="output.png", content: str=""):
+    # Menulis int ke dalam file
         from pathlib import Path
 
         path = filename
-        
-        # with open(path, 'wb') as file:
-        #     bytes = []
-        #     for value in content:
-        #         byte = int.to_bytes(value, 1,"big")
-        #         bytes.append(byte)
-        #     file.write(b"".join(bytes))
-
         with open(path, 'w') as file:
             bytes = ""
             for value in content:
                 # byte = int.to_bytes(value, 1,"big")
                 bytes += (str(value) + "\n")
             file.write(bytes)
+
+
+    def writefile_bin(self, filename: str="output.png", content: str=""):
+    # Menulis biner ke dalam file
+        from pathlib import Path
+
+        path = filename
+
+        with open(path, 'wb') as file:
+            bytes = []
+            for value in content:
+                byte = int.to_bytes(value, 1,"big")
+                bytes.append(byte)
+            file.write(b"".join(bytes))
 
     def generate_key(self):
         self.RSA.generate_key()
@@ -175,7 +168,7 @@ class RSAScreen(QDialog):
             if(fname[0] == ''):
                 self.warning_msg("Error","Tulis Nama File")
             else:
-                self.writefile_bin(fname[0],ct)
+                self.writefile_int(fname[0],ct)
                 self.pt_path = ""
                 self.refresh()
 
@@ -193,11 +186,12 @@ class RSAScreen(QDialog):
             return
         else:
             ct = self.readfile_int(self.ct_path)
-            print("Checkpoin 1")
             pt = self.RSA.decrypt(ct, int(self.dKey.toPlainText()), int(self.nKey.toPlainText()))
-            print("Checkpoin 2")
             e = time.time()
-            self.plainResult.setPlainText(str(pt))
+            display = ""
+            for i in pt:
+                display += chr(i)
+            self.plainResult.setPlainText(display)
             fname = QFileDialog.getSaveFileName(self, 'Save File', "output_decrypt/")
             if(fname[0] == ''):
                 self.warning_msg("Error","Tulis Nama File")
