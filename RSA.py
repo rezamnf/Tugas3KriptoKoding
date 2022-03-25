@@ -1,6 +1,5 @@
 from sympy import randprime
 import random
-from utility import char_to_int
 
 class RSA:
     def __init__(self, key_size=180):
@@ -36,7 +35,6 @@ class RSA:
             self.e = random.randrange(2 ** (self.key_size - 1), 2 ** self.key_size)
             if (self.gcd(self.e, self.toitent_euler) == 1):
                 break
-        # self.d = pow(self.e, -1, self.toitent_euler)
         self.d = self.mod_inverse(self.e, self.toitent_euler)
 
     def save_key(self, path, e, n, d):

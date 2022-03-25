@@ -50,7 +50,7 @@ class RSAScreen(QDialog):
             return ",".join([str(int(e, 2)) for e in result])
 
     def readfile_int(self, filename: str = "blue.png"):
-    # Membaca file menjadi biner
+    # Membaca file menjadi int
         path = filename
         
         with open(path, 'r') as file:
@@ -66,7 +66,6 @@ class RSAScreen(QDialog):
         with open(path, 'w') as file:
             bytes = ""
             for value in content:
-                # byte = int.to_bytes(value, 1,"big")
                 bytes += (str(value) + "\n")
             file.write(bytes)
 
@@ -111,7 +110,6 @@ class RSAScreen(QDialog):
     def info_msg(self,title, msg):
         temp = msg
         msg = QMessageBox()
-        # msg.setIcon(QMessageBox.Warning)
         msg.setText(str(title))
         msg.setInformativeText(temp)
         msg.exec_()
@@ -139,11 +137,13 @@ class RSAScreen(QDialog):
             self.dKey.setText(key[0])
 
     def load_pt(self):
+    #Load File PlainText
         fname = QFileDialog().getOpenFileName(None, "Load Plaintext", "output_decrypt/", "Allfiles (*.*)")
         self.pt_path = (fname[0])
         self.refresh()
 
     def load_ct(self):
+    #Load File CipherText
         fname = QFileDialog().getOpenFileName(None, "Load Ciphertext", "output_encrypt/", "Allfiles (*.*)")
         self.ct_path = (fname[0])
         self.refresh()
