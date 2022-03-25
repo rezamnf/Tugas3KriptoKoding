@@ -144,7 +144,7 @@ class RSAScreen(QDialog):
         self.refresh()
 
     def load_ct(self):
-        fname = QFileDialog().getOpenFileName(None, "Load Ciphertext", "output_encrypt/", "Text (*.txt)")
+        fname = QFileDialog().getOpenFileName(None, "Load Ciphertext", "output_encrypt/", "Allfiles (*.*)")
         self.ct_path = (fname[0])
         self.refresh()
     
